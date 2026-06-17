@@ -25,22 +25,31 @@ It wrote the code, ran away, and now the game is unplayable.
 
 ## 📝 Document Your Experience
 
-- [ ] Describe the game's purpose.
-- [ ] Detail which bugs you found.
-- [ ] Explain what fixes you applied.
+**Game purpose:** This is a number guessing game where the player tries to guess a secret number within a limited number of attempts. After each guess, the game gives a hint telling you to go higher or lower. A score is tracked based on how many attempts it takes to win.
 
-## 📸 Demo Walkthrough
+**Bugs found:**
+- The hint direction was backwards — when your guess was too high the game told you to go higher, and when it was too low it told you to go lower, which made the game impossible to win by following the hints.
+- On every even-numbered attempt, the secret number was secretly converted to a string before being compared to your guess. This caused the comparison to use alphabetical ordering instead of numeric ordering, so a guess of 9 would be considered greater than 42 because "9" comes after "4" alphabetically.
 
-Describe your fixed game in numbered steps so a reader can follow along without watching a video:
+**Fixes applied:**
+- In `logic_utils.py`, swapped the hint messages inside `check_guess` so that `guess > secret` returns "Go LOWER" and `guess < secret` returns "Go HIGHER".
+- In `app.py`, removed the even/odd attempt branch that was casting the secret to a string. The secret is now always passed as an integer to `check_guess`.
+- Moved `check_guess` from `app.py` into `logic_utils.py` and updated the import so the function lives with the other game logic.
 
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
 
-**Screenshot** *(optional)*: <!-- Insert a screenshot of your fixed, winning game here -->
+## Demo Walkthrough
 
+Difficulty: Normal | Range: 1–100 | Max attempts: 8 | Secret number: 63
+
+1. **User enters 40** → `check_guess(40, 63)` returns `"Too Low"` → hint displays "📈 Go HIGHER!" → score: 0 − 5 = **−5**
+2. **User enters 75** → `check_guess(75, 63)` returns `"Too High"` → hint displays "📉 Go LOWER!" → score: −5 − 5 = **−10**
+3. **User enters 60** → `check_guess(60, 63)` returns `"Too Low"` → hint displays "📈 Go HIGHER!" → score: −10 − 5 = **−15**
+4. **User enters 65** → `check_guess(65, 63)` returns `"Too High"` → hint displays "📉 Go LOWER!" → score: −15 − 5 = **−20**
+5. **User enters 63** → `check_guess(63, 63)` returns `"Win"` → win bonus = 100 − 10×(6+1) = 30 → final score: −20 + 30 = **10** → 🎉 balloons
+
+Session state after game: `attempts=6`, `status="won"`, `history=[40, 75, 60, 65, 63]`
+
+---
 ## 🧪 Test Results
 
 ```
